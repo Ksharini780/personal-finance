@@ -1,31 +1,32 @@
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import { connectDB } from "./database/Database.js";
-import transactionRoutes from "./Routers/Transactions.js";
+import { connectDB } from "./database/Database.js"; // Fixed path
+import transactionRoutes from "./routers/Transactions.js";
 import userRoutes from "./Routers/userRouter.js";
 
-//app is express server
+// Initialize Express
 const app = express();
-const port = 4000;
+const port = process.env.PORT || 4000; // Use environment variable if available
 
-//database connection triggered
+// Connect to Database
 connectDB();
-//we are registering cors - Cross Origin Resource Sharing - This allow our server to respond to our frontend requests
+
+// Middleware
 app.use(cors());
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
-// Middleware - is a logic which executes before the backend
-app.use(express.json());//{key:value}
-app.use(bodyParser.urlencoded({ extended: false }));//name=hmg
+// Routes
+app.use("/api/v1", transactionRoutes);
+app.use("/api/auth", userRoutes);
 
-// Adding 2 routes
-app.use("/api/v1", transactionRoutes);//all end points related to credit/debit transactions
-app.use("/api/auth", userRoutes);//this all end points related to users -> login, signup
-
+// Health Check Endpoint
 app.get("/", (req, res) => {
-  res.send("FinManager Server is working");
+  res.send("✅ FinManager Server is Running!");
 });
 
+// Start Server
 app.listen(port, () => {
-  console.log(`Server is listening on http://localhost:${port}`);
+  console.log(`🚀 Server running at http://localhost:${port}`);
 });

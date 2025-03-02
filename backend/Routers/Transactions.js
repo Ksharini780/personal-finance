@@ -1,14 +1,31 @@
-import express from 'express';
-import { addTransactionController, deleteTransactionController, getAllTransactionController, updateTransactionController } from '../controllers/transactionController.js';
+import express from "express";
+import {
+  addTransactionController,
+  getAllTransactionController,
+  getSingleTransactionController,
+  updateTransactionController,
+  deleteTransactionController,
+  deleteMultipleTransactionsController,
+} from "../controllers/transactionController.js";
 
 const router = express.Router();
 
-router.route("/addTransaction").post(addTransactionController);
+// ✅ Add a new transaction
+router.post("/addTransaction", addTransactionController);
 
-router.route("/getTransaction").post(getAllTransactionController);
+// ✅ Get all transactions (with filters)
+router.post("/getTransaction", getAllTransactionController);
 
-router.route("/deleteTransaction/:id").post(deleteTransactionController);
+// ✅ Get a single transaction by ID
+router.get("/transaction/:id", getSingleTransactionController);
 
-router.route('/updateTransaction/:id').put(updateTransactionController);
+// ✅ Update a transaction
+router.put("/updateTransaction/:id", updateTransactionController);
+
+// ✅ Delete a single transaction
+router.delete("/deleteTransaction/:id", deleteTransactionController);
+
+// ✅ Delete multiple transactions
+router.post("/deleteMultiple", deleteMultipleTransactionsController);
 
 export default router;

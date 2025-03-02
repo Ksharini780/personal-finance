@@ -1,12 +1,23 @@
-import express from 'express';
-import { loginControllers, registerControllers, setAvatarController } from '../controllers/userController.js';
+import express from "express";
+import {
+  registerControllers,
+  loginControllers,
+  setAvatarController,
+  allUsers,
+} from "../controllers/userController.js";
 
 const router = express.Router();
 
-router.route("/register").post(registerControllers);
+// ✅ Register a new user
+router.post("/register", registerControllers);
 
-router.route("/login").post(loginControllers);
+// ✅ Login an existing user
+router.post("/login", loginControllers);
 
-router.route("/setAvatar/:id").post(setAvatarController);
+// ✅ Set user avatar
+router.post("/setAvatar/:id", setAvatarController);
+
+// ✅ Get all users except the current user
+router.get("/allUsers/:id", allUsers);
 
 export default router;
