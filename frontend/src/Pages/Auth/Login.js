@@ -1,12 +1,11 @@
-// LoginPage.js
 import React, { useState, useEffect } from "react";
-import { Container, TextField, Button, Typography, Box, Paper } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { loginAPI } from "../../utils/ApiRequest";
 import BackgroundImage from "../../assets/background.jpg";
+import "bootstrap/dist/css/bootstrap.min.css"; // ✅ Bootstrap import
 
 const Login = () => {
   const navigate = useNavigate();
@@ -26,91 +25,91 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+  
     try {
       const { data } = await axios.post(loginAPI, values);
-      if (data.success) {
+      console.log("Login API Response:", data); // ✅ Log API Response
+  
+      if (data && data.token) {
         localStorage.setItem("user", JSON.stringify(data.user));
-        toast.success(data.message);
-        navigate("/");
+        localStorage.setItem("token", data.token);
+        toast.success("Login successful!");
+  
+        console.log("Redirecting to /dashboard..."); // ✅ Debugging log
+  
+        setTimeout(() => {
+          window.location.href = "/dashboard"; // ✅ Force redirect
+        }, 1000);
+        
       } else {
-        toast.error(data.message);
+        toast.error(data?.message || "Login failed. Please try again.");
       }
     } catch (error) {
+      console.error("Login Error:", error);
       toast.error("An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
+  
+  
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
+    <div
+      className="d-flex justify-content-center align-items-center vh-100"
+      style={{
         backgroundImage: `url(${BackgroundImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      <Container maxWidth="xs">
-        <Paper
-          elevation={10}
-          sx={{
-            padding: 4,
-            borderRadius: 3,
-            backdropFilter: "blur(10px)",
-            backgroundColor: "rgba(255, 255, 255, 0.15)",
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
-          }}
-        >
-          <Typography variant="h4" align="center" gutterBottom color="white">
-            Login
-          </Typography>
-          <form onSubmit={handleSubmit}>
-            <TextField
-              fullWidth
-              label="Email"
-              name="email"
+      <div
+        className="card p-4 text-white"
+        style={{
+          width: "350px",
+          backdropFilter: "blur(10px)",
+          background: "rgba(255, 255, 255, 0.15)",
+          border: "1px solid rgba(255, 255, 255, 0.3)",
+          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.3)",
+          borderRadius: "12px",
+        }}
+      >
+        <h3 className="text-center mb-3">Login</h3>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <label className="form-label">Email</label>
+            <input
               type="email"
+              name="email"
+              className="form-control"
               value={values.email}
               onChange={handleChange}
-              margin="normal"
               required
-              InputProps={{ style: { color: "white" } }}
-              InputLabelProps={{ style: { color: "white" } }}
             />
-            <TextField
-              fullWidth
-              label="Password"
-              name="password"
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Password</label>
+            <input
               type="password"
+              name="password"
+              className="form-control"
               value={values.password}
               onChange={handleChange}
-              margin="normal"
               required
-              InputProps={{ style: { color: "white" } }}
-              InputLabelProps={{ style: { color: "white" } }}
             />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              sx={{ mt: 2 }}
-              disabled={loading}
-            >
-              {loading ? "Processing..." : "Login"}
-            </Button>
-            <Typography align="center" sx={{ mt: 2, color: "white" }}>
-              Don't have an account? <Link to="/register" style={{ color: "#f2f6f7" }}>Sign Up</Link>
-            </Typography>
-          </form>
-        </Paper>
-        <ToastContainer position="bottom-right" autoClose={2000} theme="dark" />
-      </Container>
-    </Box>
+          </div>
+          <button type="submit" className="btn btn-primary w-100" disabled={loading}>
+            {loading ? "Processing..." : "Login"}
+          </button>
+          <p className="text-center mt-3">
+            Don't have an account? <Link to="/register" className="text-light">Sign Up</Link>
+          </p>
+        </form>
+      </div>
+      <ToastContainer position="bottom-right" autoClose={2000} theme="dark" />
+    </div>
   );
 };
 
 export default Login;
+

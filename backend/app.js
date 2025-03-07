@@ -1,32 +1,27 @@
 import express from "express";
+import connectDB from "./database/Database.js";
+import dotenv from "dotenv";
 import cors from "cors";
-import bodyParser from "body-parser";
-import { connectDB } from "./database/Database.js"; // Fixed path
-import transactionRoutes from "./routers/Transactions.js";
-import userRoutes from "./Routers/userRouter.js";
+import userRouter from "./Routers/userRouter.js";
+import transactionRoutes from "./Routers/Transactions.js";
 
-// Initialize Express
+dotenv.config();
 const app = express();
-const port = process.env.PORT || 4000; // Use environment variable if available
-
-// Connect to Database
-connectDB();
 
 // Middleware
-app.use(cors());
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cors());
 
 // Routes
-app.use("/api/v1", transactionRoutes);
-app.use("/api/auth", userRoutes);
+app.use("/api/users", userRouter);
+app.use("/api/transactions", transactionRoutes);
 
-// Health Check Endpoint
-app.get("/", (req, res) => {
-  res.send("✅ FinManager Server is Running!");
-});
 
-// Start Server
-app.listen(port, () => {
-  console.log(`🚀 Server running at http://localhost:${port}`);
-});
+// Connect to MongoDB
+connectDB();
+
+// Server Setup
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+
